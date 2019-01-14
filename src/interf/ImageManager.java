@@ -7,7 +7,6 @@ import plan.DynamicProgrammingAlgorithm;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -54,13 +53,10 @@ public class ImageManager {
 
     public static void showImage(BufferedImage img) {
         Graphics2D g = (Graphics2D) img.getGraphics();
-//        AffineTransform at = new AffineTransform();
-//        at.scale(2, 2);
-//        g.transform(at);
-
         JFrame frame = new JFrame();
         ImageIcon icon = new ImageIcon(img);
         JLabel label = new JLabel(icon);
+        frame.add(label);
         frame.setDefaultCloseOperation
                 (JFrame.EXIT_ON_CLOSE);
 
@@ -99,9 +95,9 @@ public class ImageManager {
                         color = Color.MAGENTA;
                 }
 
-                if(x==map.getStart().getX()&&y==map.getStart().getY())
+                if (x == map.getStart().getX() && y == map.getStart().getY())
                     color = Color.GREEN;
-                if(x==map.getGoal().getX()&&y==map.getGoal().getY())
+                if (x == map.getGoal().getX() && y == map.getGoal().getY())
                     color = Color.RED;
 
                 g.setColor(color);
@@ -139,9 +135,6 @@ public class ImageManager {
         BufferedImage newImage = new BufferedImage(width, height, image.getType());
 
         Graphics2D g = (Graphics2D) newImage.getGraphics();
-        AffineTransform at = new AffineTransform();
-        at.scale(2, 2);
-        g.transform(at);
         g.drawImage(image, 0, 0, null);
         g.setColor(Color.GRAY);
 
@@ -164,9 +157,6 @@ public class ImageManager {
         BufferedImage newImage = gridImage(image, cellSize);
 
         Graphics2D g = (Graphics2D) newImage.getGraphics();
-        AffineTransform at = new AffineTransform();
-        at.scale(3, 3);
-        g.transform(at);
 //        g.drawImage(image, 0, 0, null);
         g.setColor(Color.GRAY);
         Font font = new Font("Serif", Font.PLAIN, 10);
