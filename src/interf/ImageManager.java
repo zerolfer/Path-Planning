@@ -168,15 +168,15 @@ public class ImageManager {
         DecimalFormat df = new DecimalFormat("#.##");
         g.setFont(font);
 
-//        int i = cellSize / 2, j = cellSize / 2;
+//        int i = numColumns / 2, j = numColumns / 2;
         for (int x = 0, i = cellSize / 4; x < planner.getDistToGoal().length; x++, i += cellSize) {
             for (int y = 0, j = cellSize / 2; y < planner.getDistToGoal()[0].length; y++, j += cellSize) {
                 double n = planner.getDistToGoal()[x][y];
                 String s = n >= Double.MAX_VALUE ? "inf" : df.format(n);
                 g.drawString(s, i, j);
-//                j += cellSize;
+//                j += numColumns;
             }
-//            i += cellSize;
+//            i += numColumns;
         }
         return newImage;
     }

@@ -6,6 +6,7 @@ import plan.DynamicProgrammingAlgorithm;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
@@ -13,6 +14,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import static javax.swing.JComponent.WHEN_IN_FOCUSED_WINDOW;
 
 public class MainWindow {
     private JFrame frame;
@@ -29,7 +32,7 @@ public class MainWindow {
     private BufferedImage image;
 
     private final int numActions = 4;
-    int cellSize = 64;
+    int numColumns = 64;
     RegularGridMap map;
     DynamicProgrammingAlgorithm planner;
     List<BufferedImage> iconHistoric;
@@ -49,10 +52,33 @@ public class MainWindow {
             if (actionCounter <= numActions) actionCounter++;
             repaintMap();
         });
-        forwardButton.getInputMap(javax.swing.JComponent.WHEN_IN_FOCUSED_WINDOW).
-                put(javax.swing.KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT,0), "RIGHT_pressed");
-        backButton.getInputMap(javax.swing.JComponent.WHEN_IN_FOCUSED_WINDOW).
-                put(javax.swing.KeyStroke.getKeyStroke(KeyEvent.VK_LEFT,0), "LEFT_pressed");
+
+
+        forwardButton.getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("RIGHT"), "MOVE_FORWARD");
+        forwardButton.getActionMap().put("MOVE_FORWARD", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (actionCounter <= numActions) actionCounter++;
+                repaintMap();
+            }
+        });
+        backButton.getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("LEFT"), "MOVE_BACK");
+        backButton.getActionMap().put("MOVE_BACK", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (actionCounter > 0) actionCounter--;
+                repaintMap();
+            }
+        });
+//        forwardButton.getInputMap(WHEN_IN_FOCUSED_WINDOW).
+//                put(javax.swing.KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0), "RightPressed");
+//        forwardButton.getActionMap().put("RightPressed", forwardButton.getAction());
+//
+//        backButton.getInputMap(WHEN_IN_FOCUSED_WINDOW).
+//                put(javax.swing.KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0), "LeftPressed");
+//        backButton.getActionMap().put("LeftPressed", backButton.getAction());
+
+
         browseButton.addActionListener(e -> {
             int returnVal = fileChooser.showOpenDialog(mainPanel);
             if (returnVal == JFileChooser.APPROVE_OPTION) {
@@ -96,7 +122,8 @@ public class MainWindow {
             }
         });
 
-        map = new RegularGridMap(cellSize);
+
+        map = new RegularGridMap(numColumns);
         frame.pack();
         frame.setVisible(true);
         fileChooser.setCurrentDirectory(new File("./maps"));
@@ -139,7 +166,7 @@ public class MainWindow {
     private void showPlanResults() {
         BufferedImage img;
         if (iconHistoric.size() < 4) {
-            img = ImageManager.drawPlanNumbers(ImageManager.parseMapToImage(map), planner, cellSize);
+            img = ImageManager.drawPlanNumbers(ImageManager.parseMapToImage(map), planner, numColumns);
             iconHistoric.add(img);
         } else
             img = iconHistoric.get(actionCounter);
@@ -149,7 +176,7 @@ public class MainWindow {
     private void showCSpace() {
         BufferedImage img;
         if (iconHistoric.size() < 3) {
-            img = ImageManager.gridImage(ImageManager.parseMapToImage(map),cellSize);
+            img = ImageManager.gridImage(ImageManager.parseMapToImage(map), numColumns);
             iconHistoric.add(img);
         } else
             img = iconHistoric.get(actionCounter);
@@ -159,7 +186,7 @@ public class MainWindow {
     private void showGrid() {
         BufferedImage img;
         if (iconHistoric.size() < 2) {
-            img = ImageManager.gridImage(image, cellSize);
+            img = ImageManager.gridImage(image, numColumns);
             iconHistoric.add(img);
         } else
             img = iconHistoric.get(actionCounter);
@@ -169,7 +196,7 @@ public class MainWindow {
     private void showImage() {
         BufferedImage img;
         if (iconHistoric.size() < 1) {
-            img = ImageManager.gridImage(image, cellSize);
+            img = ImageManager.gridImage(image, numColumns);
             iconHistoric.add(img);
         } else
             img = iconHistoric.get(actionCounter);
