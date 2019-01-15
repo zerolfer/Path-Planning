@@ -1,17 +1,19 @@
 import interf.ImageManager;
+import interf.MainWindow;
 import map.MapElements;
 import map.RegularGridMap;
 import plan.DynamicProgrammingAlgorithm;
 import plan.PlanAlgorithm;
 import util.Coordinate;
 
+import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.net.CookieHandler;
 import java.util.List;
 
 public class Main {
     public static void main(String[] args){
-
+/*
         // load image
         BufferedImage img = ImageManager.readImage("map3");
         MapElements[][] tiles = ImageManager.parseImageToMap(img);
@@ -34,6 +36,9 @@ public class Main {
 
         List<Coordinate> path = planner.computePath();
         ImageManager.showPath(map,planner,path);
+*/
+
+        MainWindow mw=new MainWindow();
 
     }
 }

@@ -129,7 +129,7 @@ public class ImageManager {
         showImage(gridImage(image, cellSize));
     }
 
-    private static BufferedImage gridImage(BufferedImage image, int cellSize) {
+    public static BufferedImage gridImage(BufferedImage image, int cellSize) {
         int width = image.getWidth();
         int height = image.getHeight();
         BufferedImage newImage = new BufferedImage(width, height, image.getType());
@@ -152,10 +152,11 @@ public class ImageManager {
     }
 
     public static void showPlanNumbers(BufferedImage image, DynamicProgrammingAlgorithm planner, int cellSize) {
-        showImage(drawPlanNumbers(image,planner,cellSize));
+        showImage(drawPlanNumbers(image, planner, cellSize));
 
     }
-        public static BufferedImage drawPlanNumbers(BufferedImage image, DynamicProgrammingAlgorithm planner, int cellSize) {
+
+    public static BufferedImage drawPlanNumbers(BufferedImage image, DynamicProgrammingAlgorithm planner, int cellSize) {
         int width = image.getWidth();
         int height = image.getHeight();
         BufferedImage newImage = gridImage(image, cellSize);
@@ -181,6 +182,11 @@ public class ImageManager {
     }
 
     public static void showPath(RegularGridMap map, DynamicProgrammingAlgorithm planner, List<Coordinate> path) {
+        showImage(drawPath(map, planner, path));
+
+    }
+
+    public static BufferedImage drawPath(RegularGridMap map, DynamicProgrammingAlgorithm planner, List<Coordinate> path) {
         MapElements[][] grid = map.getGrid();
         int cellSize = map.getCellSize();
         int width = grid.length * cellSize;
@@ -209,8 +215,8 @@ public class ImageManager {
                     default:
                         color = Color.MAGENTA;
                 }
-                if(path.contains(new Coordinate(x,y)))
-                    color=Color.yellow;
+                if (path.contains(new Coordinate(x, y)))
+                    color = Color.yellow;
 
                 if (x == map.getStart().getX() && y == map.getStart().getY())
                     color = Color.GREEN;
@@ -233,6 +239,6 @@ public class ImageManager {
                 xCount = 0;
             }
         }
-        showImage(drawPlanNumbers(gridImage(img,cellSize),planner,cellSize));
+        return drawPlanNumbers(gridImage(img, cellSize), planner, cellSize);
     }
 }
