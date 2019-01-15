@@ -55,11 +55,15 @@ public class DynamicProgrammingAlgorithm implements PlanAlgorithm {
                 int dx = 0, dy = 0;
                 double minCost = Double.MAX_VALUE;
                 for (Coordinate delta : moveCost.keySet()) {
-                    double cost = distToGoal[node.getX() + delta.getX()][node.getY() + delta.getY()];
-                    if (minCost > cost) {
-                        dx = delta.getX();
-                        dy = delta.getY();
-                        minCost = cost;
+                    try {
+                        double cost = distToGoal[node.getX() + delta.getX()][node.getY() + delta.getY()];
+                        if (minCost > cost) {
+                            dx = delta.getX();
+                            dy = delta.getY();
+                            minCost = cost;
+                        }
+                    } catch (IndexOutOfBoundsException e) {
+                        // continue
                     }
                 }
 
@@ -85,7 +89,7 @@ public class DynamicProgrammingAlgorithm implements PlanAlgorithm {
             }
             ++i;
         }
-        System.out.println('g');
+        System.out.println("Planner executed");
 //        while fringe not empty
 //        node:=first element of fringe
 //        if node is what we are searching for
@@ -150,17 +154,17 @@ public class DynamicProgrammingAlgorithm implements PlanAlgorithm {
     }
 
     private Coordinate findMinNeighbour(Coordinate pivot) {
-        Coordinate minCoordinate=pivot;
-        double minWeight=Double.MAX_VALUE;
+        Coordinate minCoordinate = pivot;
+        double minWeight = Double.MAX_VALUE;
 
         for (int xshift = -1; xshift <= 1; xshift++) {
             for (int yshift = -1; yshift <= 1; yshift++) {
                 if (xshift == 0 && yshift == 0) continue;
                 try {
-                    double weight=distToGoal[pivot.getX() + xshift][pivot.getY() + yshift];
-                    if(weight < minWeight){
-                        minWeight=weight;
-                        minCoordinate=new Coordinate(pivot.getX() + xshift,pivot.getY() + yshift);
+                    double weight = distToGoal[pivot.getX() + xshift][pivot.getY() + yshift];
+                    if (weight < minWeight) {
+                        minWeight = weight;
+                        minCoordinate = new Coordinate(pivot.getX() + xshift, pivot.getY() + yshift);
                     }
                 } catch (IndexOutOfBoundsException ex) {
                 }

@@ -5,6 +5,8 @@ import plan.DynamicProgrammingAlgorithm;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
@@ -24,6 +26,8 @@ public class MainWindow {
     private JButton forwardButton;
     private JButton browseButton;
     private JLabel mainLabel;
+    private JCheckBox showNumbersCheckBox;
+    private JSpinner numColumsSpinner;
 
     final JFileChooser fileChooser = new JFileChooser();
 
@@ -32,7 +36,7 @@ public class MainWindow {
     private BufferedImage image;
 
     private final int numActions = 4;
-    int numColumns = 64;
+//    int numColumns = 128;
     RegularGridMap map;
     DynamicProgrammingAlgorithm planner;
     List<BufferedImage> iconHistoric;
@@ -70,13 +74,6 @@ public class MainWindow {
                 repaintMap();
             }
         });
-//        forwardButton.getInputMap(WHEN_IN_FOCUSED_WINDOW).
-//                put(javax.swing.KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0), "RightPressed");
-//        forwardButton.getActionMap().put("RightPressed", forwardButton.getAction());
-//
-//        backButton.getInputMap(WHEN_IN_FOCUSED_WINDOW).
-//                put(javax.swing.KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0), "LeftPressed");
-//        backButton.getActionMap().put("LeftPressed", backButton.getAction());
 
 
         browseButton.addActionListener(e -> {
@@ -95,6 +92,7 @@ public class MainWindow {
                 }
                 actionCounter = 0;
                 iconHistoric.clear();
+                map = new RegularGridMap(image.getWidth() / (int)numColumsSpinner.getValue());
                 repaintMap();
                 map.buildMap(ImageManager.parseImageToMap(image));
                 planner = new DynamicProgrammingAlgorithm(map);
@@ -102,32 +100,24 @@ public class MainWindow {
 
             }
         });
+        fileChooser.setCurrentDirectory(new File("./maps"));
+        iconHistoric = new ArrayList<>();
+
+        ChangeListener changeListener = e -> {
+            iconHistoric.clear();
+            actionCounter = 0;
+        };
+
+        showNumbersCheckBox.addChangeListener(changeListener);
         mainPanel.setFocusable(true);
         frame.setFocusable(true);
         mainLabel.setFocusable(true);
-        mainPanel.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyTyped(KeyEvent e) {
-                int keyCode = e.getKeyCode();
+        numColumsSpinner.addChangeListener(changeListener);
+        numColumsSpinner.setModel(new SpinnerListModel(new Integer[]{2,4,8,16,32,64,128,256,512,1024,2048}));
+        numColumsSpinner.setValue(64);
 
-                switch (keyCode) {
-                    case KeyEvent.VK_LEFT:
-                        backButton.doClick();
-                        break;
-
-                    case KeyEvent.VK_RIGHT:
-                        forwardButton.doClick();
-                        break;
-                }
-            }
-        });
-
-
-        map = new RegularGridMap(numColumns);
         frame.pack();
         frame.setVisible(true);
-        fileChooser.setCurrentDirectory(new File("./maps"));
-        iconHistoric = new ArrayList<>();
     }
 
     private void repaintMap() {
@@ -143,8 +133,10 @@ public class MainWindow {
                 planner.executePlanner();
                 break;
             case 3:
-                showPlanResults();
-                break;
+                if (showNumbersCheckBox.isSelected()) {
+                    showPlanResults();
+                    break;
+                }
             case 4:
                 showFinalPath();
                 break;
@@ -156,7 +148,12 @@ public class MainWindow {
     private void showFinalPath() {
         BufferedImage img;
         if (iconHistoric.size() < 5) {
-            img = ImageManager.drawPath(map, planner, planner.computePath());
+            if (showNumbersCheckBox.isSelected())
+                img = ImageManager.drawPlanNumbers(ImageManager.drawPath(map, planner, planner.computePath()),
+                        planner, map.getCellSize());
+            else
+                img = ImageManager.drawPath(map, planner, planner.computePath());
+
             iconHistoric.add(img);
         } else
             img = iconHistoric.get(actionCounter);
@@ -166,7 +163,7 @@ public class MainWindow {
     private void showPlanResults() {
         BufferedImage img;
         if (iconHistoric.size() < 4) {
-            img = ImageManager.drawPlanNumbers(ImageManager.parseMapToImage(map), planner, numColumns);
+            img = ImageManager.drawPlanNumbers(ImageManager.parseMapToImage(map), planner, map.getCellSize());
             iconHistoric.add(img);
         } else
             img = iconHistoric.get(actionCounter);
@@ -176,7 +173,7 @@ public class MainWindow {
     private void showCSpace() {
         BufferedImage img;
         if (iconHistoric.size() < 3) {
-            img = ImageManager.gridImage(ImageManager.parseMapToImage(map), numColumns);
+            img = ImageManager.gridImage(ImageManager.parseMapToImage(map), map.getCellSize());
             iconHistoric.add(img);
         } else
             img = iconHistoric.get(actionCounter);
@@ -186,7 +183,7 @@ public class MainWindow {
     private void showGrid() {
         BufferedImage img;
         if (iconHistoric.size() < 2) {
-            img = ImageManager.gridImage(image, numColumns);
+            img = ImageManager.gridImage(image, map.getCellSize());
             iconHistoric.add(img);
         } else
             img = iconHistoric.get(actionCounter);
@@ -196,7 +193,7 @@ public class MainWindow {
     private void showImage() {
         BufferedImage img;
         if (iconHistoric.size() < 1) {
-            img = ImageManager.gridImage(image, numColumns);
+            img = ImageManager.gridImage(image, map.getCellSize());
             iconHistoric.add(img);
         } else
             img = iconHistoric.get(actionCounter);

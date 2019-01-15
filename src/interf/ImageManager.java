@@ -33,9 +33,11 @@ public class ImageManager {
     }
 
     public static MapElements[][] parseImageToMap(BufferedImage image) {
+        int error = 2;
         MapElements[][] result = new MapElements[image.getWidth()][image.getHeight()];
         for (int x = 0; x < image.getWidth(); x++) {
             for (int y = 0; y < image.getHeight(); y++) {
+                result[x][y] = BLACK; // if it doesen't match, it will be treated as obstacle
                 final int clr = image.getRGB(x, y);
                 Color color = new Color(image.getRGB(x, y));
 
@@ -43,13 +45,18 @@ public class ImageManager {
                     result[x][y] = BLACK;
                 if (color.equals(Color.WHITE))
                     result[x][y] = WHITE;
-                if (color.equals(Color.RED))
+                if (color.equals(Color.RED)) {
                     result[x][y] = START;
-                if (color.equals(Color.GREEN))
+                    error--;
+                }
+                if (color.equals(Color.GREEN)) {
                     result[x][y] = GOAL;
+                    error--;
+                }
 
             }
         }
+        if (error > 0) System.err.println("THE MAP HAS NOT GOAL/START MARKS");
         return result;
     }
 
@@ -239,6 +246,6 @@ public class ImageManager {
                 xCount = 0;
             }
         }
-        return drawPlanNumbers(gridImage(img, cellSize), planner, cellSize);
+        return gridImage(img, cellSize);
     }
 }
