@@ -27,6 +27,10 @@ public class Coordinate {
                 y == that.y;
     }
 
+    public boolean equals(int x, int y){
+        return this.getX() == x && this.getY() == y;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(x, y);

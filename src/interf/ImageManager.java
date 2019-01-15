@@ -3,6 +3,7 @@ package interf;
 import map.MapElements;
 import map.RegularGridMap;
 import plan.DynamicProgrammingAlgorithm;
+import util.Coordinate;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -11,6 +12,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.util.List;
 
 import static map.MapElements.*;
 
@@ -57,9 +59,7 @@ public class ImageManager {
         ImageIcon icon = new ImageIcon(img);
         JLabel label = new JLabel(icon);
         frame.add(label);
-        frame.setDefaultCloseOperation
-                (JFrame.EXIT_ON_CLOSE);
-
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         frame.pack();
         frame.setVisible(true);
@@ -152,6 +152,10 @@ public class ImageManager {
     }
 
     public static void showPlanNumbers(BufferedImage image, DynamicProgrammingAlgorithm planner, int cellSize) {
+        showImage(drawPlanNumbers(image,planner,cellSize));
+
+    }
+        public static BufferedImage drawPlanNumbers(BufferedImage image, DynamicProgrammingAlgorithm planner, int cellSize) {
         int width = image.getWidth();
         int height = image.getHeight();
         BufferedImage newImage = gridImage(image, cellSize);
@@ -159,18 +163,76 @@ public class ImageManager {
         Graphics2D g = (Graphics2D) newImage.getGraphics();
 //        g.drawImage(image, 0, 0, null);
         g.setColor(Color.GRAY);
-        Font font = new Font("Serif", Font.PLAIN, 10);
+        Font font = new Font("Serif", Font.PLAIN, 20);
         DecimalFormat df = new DecimalFormat("#.##");
         g.setFont(font);
 
 //        int i = cellSize / 2, j = cellSize / 2;
-        for (int x = 0, i = cellSize / 2; x < planner.getWeights().length; x++, i += cellSize) {
-            for (int y = 0, j = cellSize / 2; y < planner.getWeights()[0].length; y++, j += cellSize) {
-                g.drawString(df.format(planner.getWeights()[x][y]), i, j);
+        for (int x = 0, i = cellSize / 4; x < planner.getDistToGoal().length; x++, i += cellSize) {
+            for (int y = 0, j = cellSize / 2; y < planner.getDistToGoal()[0].length; y++, j += cellSize) {
+                double n = planner.getDistToGoal()[x][y];
+                String s = n >= Double.MAX_VALUE ? "inf" : df.format(n);
+                g.drawString(s, i, j);
 //                j += cellSize;
             }
 //            i += cellSize;
         }
-        showImage(newImage);
+        return newImage;
+    }
+
+    public static void showPath(RegularGridMap map, DynamicProgrammingAlgorithm planner, List<Coordinate> path) {
+        MapElements[][] grid = map.getGrid();
+        int cellSize = map.getCellSize();
+        int width = grid.length * cellSize;
+        int height = grid[0].length * cellSize;
+        final BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        Graphics2D g = (Graphics2D) img.getGraphics();
+
+        int xCount = 0, yCount = 0;
+        int x = 0, y = 0;
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                Color color;
+                switch (grid[x][y]) {
+                    case BLACK:
+                        color = Color.BLACK;
+                        break;
+                    case WHITE:
+                        color = Color.WHITE;
+                        break;
+//                    case GOAL:
+//                        color = Color.RED;
+//                        break;
+//                    case START:
+//                        color = Color.GREEN;
+//                        break;
+                    default:
+                        color = Color.MAGENTA;
+                }
+                if(path.contains(new Coordinate(x,y)))
+                    color=Color.yellow;
+
+                if (x == map.getStart().getX() && y == map.getStart().getY())
+                    color = Color.GREEN;
+                if (x == map.getGoal().getX() && y == map.getGoal().getY())
+                    color = Color.RED;
+
+                g.setColor(color);
+                g.fillRect(i, j, cellSize, cellSize);
+
+                yCount++;
+                if (yCount >= cellSize) {
+                    y++;
+                    yCount = 0;
+                }
+            }
+            y = 0;
+            xCount++;
+            if (xCount >= cellSize) {
+                x++;
+                xCount = 0;
+            }
+        }
+        showImage(drawPlanNumbers(gridImage(img,cellSize),planner,cellSize));
     }
 }

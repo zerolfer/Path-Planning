@@ -9,27 +9,38 @@ import java.util.*;
 public class DynamicProgrammingAlgorithm implements PlanAlgorithm {
 
     private final Coordinate goal;
-    private final double[][] weights;
+    private final Coordinate start;
+    private final double[][] distToGoal;
     private final RegularGridMap map;
+
+    private Map<Coordinate, Double> moveCost = new HashMap<Coordinate, Double>();
 
     public DynamicProgrammingAlgorithm(RegularGridMap map) {
         this.goal = map.getGoal();
+        this.start = map.getStart();
         this.map = map;
-        this.weights = new double[map.getGrid().length][map.getGrid()[0].length];
+        this.distToGoal = new double[map.getGrid().length][map.getGrid()[0].length];
+        for (int i = 0; i < distToGoal.length; i++) {
+            for (int j = 0; j < distToGoal[0].length; j++) {
+                if (!goal.equals(i, j))
+                    this.distToGoal[i][j] = Double.MAX_VALUE;
+            }
+        }
+        double r2 = Math.sqrt(2);
+        moveCost.put(new Coordinate(0, -1), 1d);
+        moveCost.put(new Coordinate(0, +1), 1d);
+        moveCost.put(new Coordinate(+1, 0), 1d);
+        moveCost.put(new Coordinate(-1, 0), 1d);
+        moveCost.put(new Coordinate(-1, -1), r2);
+        moveCost.put(new Coordinate(+1, +1), r2);
+        moveCost.put(new Coordinate(+1, -1), r2);
+        moveCost.put(new Coordinate(-1, +1), r2);
     }
 
     @Override
     public void executePlanner() {
-//        List<Coordinate> previousWavefront = new ArrayList<>();
-//        previousWavefront.add(goal);
+
         Queue<Coordinate> wavefront = new LinkedList<>();
-//        double i = 0;
-//        for (Coordinate c : previousWavefront) {
-//            weights[c.getX()][c.getY()] = i;
-//
-//        }
-//        Coordinate parent = goal;
-//        wavefront.push(getChildren(goal));
         wavefront.add(goal);
         Set visited = new HashSet();
         Queue<Coordinate> parents = new LinkedList<>();
@@ -39,9 +50,26 @@ public class DynamicProgrammingAlgorithm implements PlanAlgorithm {
             Coordinate node = wavefront.poll();
 //            if (node.getX() == start.getX() && node.getY() == goal.getY())
 //                return;
+            if (!node.equals(goal)) {
+                // seach the minimun value of the neighbours of the current node
+                int dx = 0, dy = 0;
+                double minCost = Double.MAX_VALUE;
+                for (Coordinate delta : moveCost.keySet()) {
+                    double cost = distToGoal[node.getX() + delta.getX()][node.getY() + delta.getY()];
+                    if (minCost > cost) {
+                        dx = delta.getX();
+                        dy = delta.getY();
+                        minCost = cost;
+                    }
+                }
 
-            weights[node.getX()][node.getY()] = weights[currentParent.getX()][currentParent.getY()] +
-                    Math.sqrt(Math.pow(currentParent.getX() - node.getX(), 2) + Math.pow(currentParent.getY() - node.getY(), 2));
+                // once we have the mininum dx and dy, compute the cost:
+                distToGoal[node.getX()][node.getY()] =
+                        moveCost.get(new Coordinate(dx, dy)) + distToGoal[node.getX() + dx][node.getY() + dy];
+            }
+
+//            distToGoal[node.getX()][node.getY()] = distToGoal[currentParent.getX()][currentParent.getY()] +
+//                    Math.sqrt(Math.pow(currentParent.getX() - node.getX(), 2) + Math.pow(currentParent.getY() - node.getY(), 2));
 
             Stack<Coordinate> children = getChildren(node);
             for (Coordinate child : children) {
@@ -80,7 +108,7 @@ public class DynamicProgrammingAlgorithm implements PlanAlgorithm {
             for (int yshift = -1; yshift <= 1; yshift++) {
                 if (xshift == 0 && yshift == 0) continue;
                 try {
-                    double a = weights[x + xshift][y + yshift];
+                    double a = distToGoal[x + xshift][y + yshift];
                     result.push(new Coordinate(x + xshift, y + yshift));
                 } catch (IndexOutOfBoundsException ex) {
                 }
@@ -89,12 +117,60 @@ public class DynamicProgrammingAlgorithm implements PlanAlgorithm {
         return result;
     }
 
+    /**
+     * Greedy algorithm used after call the fuction <code><a href=executePlanner>executePlanner</a></code>
+     *
+     * @return the path form starting point to goal point based on the wavefront-based planning algorithm
+     * in
+     */
     @Override
-    public List<Coordinate> getPath() {
-        return null;
+    public List<Coordinate> computePath() {
+        List<Coordinate> path = new ArrayList<>();
+//        path.add(start);
+        path.add(computePathRecursive(path, start));
+        System.out.println(path);
+//        for (int x =0;x<distToGoal.length;x++){
+//            for(int y=0;y<distToGoal[0].length;y++){
+//                Coordinate nextStep = findMinNeighbour(distToGoal[x][y]);
+//                path.add(nextStep);
+//                Coordinate current=nextStep;
+
+//            }
+//        }
+        return path;
     }
 
-    public double[][] getWeights() {
-        return this.weights;
+    public Coordinate computePathRecursive(List<Coordinate> path, Coordinate current) {
+        if (!current.equals(goal)) {
+            Coordinate nextStep = findMinNeighbour(current);
+            path.add(current);
+            return computePathRecursive(path, nextStep);
+        } else return current;
+
+    }
+
+    private Coordinate findMinNeighbour(Coordinate pivot) {
+        Coordinate minCoordinate=pivot;
+        double minWeight=Double.MAX_VALUE;
+
+        for (int xshift = -1; xshift <= 1; xshift++) {
+            for (int yshift = -1; yshift <= 1; yshift++) {
+                if (xshift == 0 && yshift == 0) continue;
+                try {
+                    double weight=distToGoal[pivot.getX() + xshift][pivot.getY() + yshift];
+                    if(weight < minWeight){
+                        minWeight=weight;
+                        minCoordinate=new Coordinate(pivot.getX() + xshift,pivot.getY() + yshift);
+                    }
+                } catch (IndexOutOfBoundsException ex) {
+                }
+
+            }
+        }
+        return minCoordinate;
+    }
+
+    public double[][] getDistToGoal() {
+        return this.distToGoal;
     }
 }

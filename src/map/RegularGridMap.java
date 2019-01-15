@@ -25,7 +25,8 @@ public class RegularGridMap implements SpaceMap {
         return start;
     }
 
-    public RegularGridMap() { }
+    public RegularGridMap() {
+    }
 
     @Override
     public void buildMap(MapElements[][] img) {
@@ -87,7 +88,15 @@ public class RegularGridMap implements SpaceMap {
         return this.cellSize;
     }
 
-    public MapElements getCell(Coordinate c){
+    public MapElements getCell(Coordinate c) {
         return this.getGrid()[c.getX()][c.getY()];
+    }
+
+    public boolean isFree(Coordinate c) {
+        return isFree(c.getX(), c.getY());
+    }
+
+    public boolean isFree(int x, int y) {
+        return grid[x][y] != MapElements.BLACK;
     }
 }
