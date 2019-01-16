@@ -8,4 +8,6 @@ public interface PlanAlgorithm {
     void executePlanner();
 
     List<Coordinate> computePath();
+
+    double[][] getDistToGoal();
 }

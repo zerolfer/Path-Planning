@@ -2,7 +2,8 @@ package interf;
 
 import map.MapElements;
 import map.RegularGridMap;
-import plan.DynamicProgrammingAlgorithm;
+import plan.PlanAlgorithm;
+import plan.WavefrontAlgorithm;
 import util.Coordinate;
 
 import javax.imageio.ImageIO;
@@ -156,16 +157,26 @@ public class ImageManager {
             g.drawLine(0, ystart, width, ystart);
         }
         return newImage;
+
+        /* TODO
+        alternativa:::
+        for (int i = 0; i < width; i+=cellSize)
+            g.drawLine(i, 0, i, height);
+
+        for (int j = 0; j < height; j+=cellSize)
+            g.drawLine(0, j, width, j);
+
+         */
     }
 
-    public static void showPlanNumbers(BufferedImage image, DynamicProgrammingAlgorithm planner, int cellSize) {
+    public static void showPlanNumbers(BufferedImage image, WavefrontAlgorithm planner, int cellSize) {
         showImage(drawPlanNumbers(image, planner, cellSize));
 
     }
 
-    public static BufferedImage drawPlanNumbers(BufferedImage image, DynamicProgrammingAlgorithm planner, int cellSize) {
-        int width = image.getWidth();
-        int height = image.getHeight();
+    public static BufferedImage drawPlanNumbers(BufferedImage image, PlanAlgorithm planner, int cellSize) {
+
+
         BufferedImage newImage = gridImage(image, cellSize);
 
         Graphics2D g = (Graphics2D) newImage.getGraphics();
@@ -188,12 +199,12 @@ public class ImageManager {
         return newImage;
     }
 
-    public static void showPath(RegularGridMap map, DynamicProgrammingAlgorithm planner, List<Coordinate> path) {
+    public static void showPath(RegularGridMap map, WavefrontAlgorithm planner, List<Coordinate> path) {
         showImage(drawPath(map, planner, path));
 
     }
 
-    public static BufferedImage drawPath(RegularGridMap map, DynamicProgrammingAlgorithm planner, List<Coordinate> path) {
+    public static BufferedImage drawPath(RegularGridMap map, PlanAlgorithm planner, List<Coordinate> path) {
         MapElements[][] grid = map.getGrid();
         int cellSize = map.getCellSize();
         int width = grid.length * cellSize;

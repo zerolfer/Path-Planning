@@ -6,7 +6,7 @@ import util.Coordinate;
 
 import java.util.*;
 
-public class DynamicProgrammingAlgorithm implements PlanAlgorithm {
+public class WavefrontAlgorithm implements PlanAlgorithm {
 
     private final Coordinate goal;
     private final Coordinate start;
@@ -15,7 +15,7 @@ public class DynamicProgrammingAlgorithm implements PlanAlgorithm {
 
     private Map<Coordinate, Double> moveCost = new HashMap<Coordinate, Double>();
 
-    public DynamicProgrammingAlgorithm(RegularGridMap map) {
+    public WavefrontAlgorithm(RegularGridMap map) {
         this.goal = map.getGoal();
         this.start = map.getStart();
         this.map = map;
@@ -176,5 +176,13 @@ public class DynamicProgrammingAlgorithm implements PlanAlgorithm {
 
     public double[][] getDistToGoal() {
         return this.distToGoal;
+    }
+
+    /**
+     * THIS IS FOR THE USER INTERFACE JCOMBOBOX
+     */
+    @Override
+    public String toString() {
+        return "Wavefront Algorithm";
     }
 }

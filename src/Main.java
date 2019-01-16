@@ -1,15 +1,4 @@
-import interf.ImageManager;
 import interf.MainWindow;
-import map.MapElements;
-import map.RegularGridMap;
-import plan.DynamicProgrammingAlgorithm;
-import plan.PlanAlgorithm;
-import util.Coordinate;
-
-import javax.swing.*;
-import java.awt.image.BufferedImage;
-import java.net.CookieHandler;
-import java.util.List;
 
 public class Main {
     public static void main(String[] args){
@@ -29,7 +18,7 @@ public class Main {
         ImageManager.showGridedImage(ImageManager.parseMapToImage(map), cellSize);
 
         // Planning
-        DynamicProgrammingAlgorithm planner = new DynamicProgrammingAlgorithm(map);
+        WavefrontAlgorithm planner = new WavefrontAlgorithm(map);
         planner.executePlanner();
 
         ImageManager.showPlanNumbers(ImageManager.parseMapToImage(map), planner, cellSize);

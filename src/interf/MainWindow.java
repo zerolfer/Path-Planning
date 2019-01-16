@@ -1,16 +1,15 @@
 package interf;
 
 import map.RegularGridMap;
-import plan.DynamicProgrammingAlgorithm;
+import plan.AStarAlgorithm;
+import plan.PlanAlgorithm;
+import plan.WavefrontAlgorithm;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -28,6 +27,7 @@ public class MainWindow {
     private JLabel mainLabel;
     private JCheckBox showNumbersCheckBox;
     private JSpinner numColumsSpinner;
+    private JComboBox comboBox1;
 
     final JFileChooser fileChooser = new JFileChooser();
 
@@ -36,9 +36,9 @@ public class MainWindow {
     private BufferedImage image;
 
     private final int numActions = 4;
-//    int numColumns = 128;
+    //    int numColumns = 128;
     RegularGridMap map;
-    DynamicProgrammingAlgorithm planner;
+    PlanAlgorithm planner;
     List<BufferedImage> iconHistoric;
 
 
@@ -92,10 +92,17 @@ public class MainWindow {
                 }
                 actionCounter = 0;
                 iconHistoric.clear();
-                map = new RegularGridMap(image.getWidth() / (int)numColumsSpinner.getValue());
+                map = new RegularGridMap(image.getWidth() / (int) numColumsSpinner.getValue());
                 repaintMap();
                 map.buildMap(ImageManager.parseImageToMap(image));
-                planner = new DynamicProgrammingAlgorithm(map);
+
+                comboBox1.setModel(new DefaultComboBoxModel(
+                        new PlanAlgorithm[]{new WavefrontAlgorithm(map), new AStarAlgorithm(map)})
+                );
+                comboBox1.setSelectedIndex(0);
+
+
+                planner = (PlanAlgorithm) comboBox1.getSelectedItem();
                 System.out.println(map.parseString());
 
             }
@@ -104,8 +111,13 @@ public class MainWindow {
         iconHistoric = new ArrayList<>();
 
         ChangeListener changeListener = e -> {
-            iconHistoric.clear();
-            actionCounter = 0;
+            if (image != null && map != null) {
+                iconHistoric.clear();
+                actionCounter = 0;
+                map = new RegularGridMap(image.getWidth() / (Integer) numColumsSpinner.getValue());
+                map.buildMap(ImageManager.parseImageToMap(image));
+                repaintMap();
+            }
         };
 
         showNumbersCheckBox.addChangeListener(changeListener);
@@ -113,11 +125,17 @@ public class MainWindow {
         frame.setFocusable(true);
         mainLabel.setFocusable(true);
         numColumsSpinner.addChangeListener(changeListener);
-        numColumsSpinner.setModel(new SpinnerListModel(new Integer[]{2,4,8,16,32,64,128,256,512,1024,2048}));
+        numColumsSpinner.setModel(new SpinnerListModel(new Integer[]{2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048}));
         numColumsSpinner.setValue(64);
 
         frame.pack();
         frame.setVisible(true);
+        comboBox1.addActionListener(e -> {
+            planner = (PlanAlgorithm) comboBox1.getSelectedItem();
+            actionCounter = 0;
+            iconHistoric.clear();
+            repaintMap();
+        });
     }
 
     private void repaintMap() {
@@ -129,10 +147,13 @@ public class MainWindow {
                 showGrid();
                 break;
             case 2:
+                if (iconHistoric.size() < 3 || map.getGrid() == null)
+                    map.buildMap(ImageManager.parseImageToMap(image));
                 showCSpace();
-                planner.executePlanner();
                 break;
             case 3:
+                if (iconHistoric.size() < 4)
+                    planner.executePlanner();
                 if (showNumbersCheckBox.isSelected()) {
                     showPlanResults();
                     break;

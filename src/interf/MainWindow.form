@@ -21,12 +21,6 @@
           <text value="🡆" noi18n="true"/>
         </properties>
       </component>
-      <component id="b798" class="javax.swing.JButton" binding="browseButton" default-binding="true">
-        <constraints border-constraint="South"/>
-        <properties>
-          <text value="Browse"/>
-        </properties>
-      </component>
       <component id="8e688" class="javax.swing.JLabel" binding="mainLabel">
         <constraints border-constraint="Center"/>
         <properties>
@@ -71,6 +65,23 @@
               <maximumSize width="700" height="24"/>
               <minimumSize width="200" height="24"/>
             </properties>
+          </component>
+        </children>
+      </grid>
+      <grid id="c2b72" layout-manager="BorderLayout" hgap="0" vgap="0">
+        <constraints border-constraint="South"/>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <component id="b798" class="javax.swing.JButton" binding="browseButton" default-binding="true">
+            <constraints border-constraint="Center"/>
+            <properties>
+              <text value="Browse"/>
+            </properties>
+          </component>
+          <component id="e425" class="javax.swing.JComboBox" binding="comboBox1" default-binding="true">
+            <constraints border-constraint="West"/>
+            <properties/>
           </component>
         </children>
       </grid>
