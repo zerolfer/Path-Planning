@@ -99,7 +99,8 @@ public class MainWindow {
                 comboBox1.setModel(new DefaultComboBoxModel<>(
                         new PlanAlgorithm[]{new WavefrontAlgorithm(map), new AStarAlgorithm(map)})
                 );
-                comboBox1.setSelectedIndex(0);
+
+                comboBox1.setSelectedIndex(comboBox1.getSelectedIndex() < 0 ? 0 : comboBox1.getSelectedIndex());
 
 
                 planner = (PlanAlgorithm) comboBox1.getSelectedItem();

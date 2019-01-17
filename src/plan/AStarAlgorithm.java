@@ -112,6 +112,7 @@ public class AStarAlgorithm implements PlanAlgorithm {
 
             if (current.equals(goal)) {
                 this.goal = current; // update info
+                System.out.println("A-Star executed");
                 return;
             }
             for (Node child : getChildren(current)) {
@@ -120,15 +121,14 @@ public class AStarAlgorithm implements PlanAlgorithm {
                 child.g = current.g + getEuclideanDistance(child, current);
                 child.setF(child.g);
 
-                boolean b=false;
+                boolean b = false;
                 for (Node openNode : OPEN)
                     if (openNode.equals(child) && child.g > openNode.g)
                         b = true;
-                if(b) continue;
+                if (b) continue;
                 OPEN.add(child);
             }
         }
-        System.out.println("A-Star executed");
 
     }
 
@@ -155,6 +155,7 @@ public class AStarAlgorithm implements PlanAlgorithm {
             path.add(current.coordinate);
             current = current.parent;
         }
+        System.out.println(path);
         return path; // THE PATH IS IN REVERSE ORDER BUT FOR PAINTING DOENSEN'T MATTER
     }
 
