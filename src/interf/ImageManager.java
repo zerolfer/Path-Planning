@@ -146,16 +146,11 @@ public class ImageManager {
         g.drawImage(image, 0, 0, null);
         g.setColor(Color.GRAY);
 
-        int xstart = 0;
-        for (int i = 0; i < width; i++) {
-            xstart = i * cellSize;
-            g.drawLine(xstart, 0, xstart, height);
-        }
-        int ystart = 0;
-        for (int j = 0; j < height; j++) {
-            ystart = j * cellSize;
-            g.drawLine(0, ystart, width, ystart);
-        }
+        for (int i = 0; i < width; i+=cellSize)
+            g.drawLine(i, 0, i, height);
+
+        for (int j = 0; j < height; j+=cellSize)
+            g.drawLine(0, j, width, j);
         return newImage;
 
         /* TODO

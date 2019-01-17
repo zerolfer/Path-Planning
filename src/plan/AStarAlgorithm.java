@@ -3,7 +3,10 @@ package plan;
 import map.RegularGridMap;
 import util.Coordinate;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.PriorityQueue;
 
 public class AStarAlgorithm implements PlanAlgorithm {
 
@@ -14,11 +17,11 @@ public class AStarAlgorithm implements PlanAlgorithm {
         double f; // f(x)=g(x)+h(x)
         double g;
 
-        public Node(Coordinate coordinate) {
+        Node(Coordinate coordinate) {
             this.coordinate = coordinate;
         }
 
-        public Node(Coordinate coordinate, Node parent) {
+        Node(Coordinate coordinate, Node parent) {
             this(coordinate);
             this.parent = parent;
         }
@@ -56,11 +59,11 @@ public class AStarAlgorithm implements PlanAlgorithm {
                     '}';
         }
 
-        public double getF() {
+        double getF() {
             return f;
         }
 
-        public void setF(double g) {
+        void setF(double g) {
             this.f = g + h();
             distToGoal[coordinate.getX()][coordinate.getY()] = f;
         }
@@ -72,8 +75,8 @@ public class AStarAlgorithm implements PlanAlgorithm {
     }
 
     private Node goal;
-    private final Node start;
-    private final RegularGridMap map;
+    private Node start;
+    private RegularGridMap map;
     private double[][] distToGoal;
 
     public AStarAlgorithm(RegularGridMap map) {
@@ -154,6 +157,21 @@ public class AStarAlgorithm implements PlanAlgorithm {
     @Override
     public double[][] getDistToGoal() {
         return this.distToGoal;
+    }
+
+    @Override
+    public void reset(RegularGridMap map) {
+        this.map = map;
+        this.goal = new Node(map.getGoal());
+        this.start = new Node(map.getStart());
+        distToGoal = new double[this.map.getGrid().length][this.map.getGrid()[0].length];
+        for (int i = 0; i < distToGoal.length; i++) {
+            for (int j = 0; j < distToGoal[0].length; j++) {
+                if (i == start.coordinate.getX() && j == start.coordinate.getY())
+                    distToGoal[i][j] = start.h();
+                distToGoal[i][j] = Double.MAX_VALUE;
+            }
+        }
     }
 
     /**

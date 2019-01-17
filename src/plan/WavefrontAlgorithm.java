@@ -8,12 +8,12 @@ import java.util.*;
 
 public class WavefrontAlgorithm implements PlanAlgorithm {
 
-    private final Coordinate goal;
-    private final Coordinate start;
-    private final double[][] distToGoal;
-    private final RegularGridMap map;
+    private Coordinate goal;
+    private Coordinate start;
+    private double[][] distToGoal;
+    private RegularGridMap map;
 
-    private Map<Coordinate, Double> moveCost = new HashMap<Coordinate, Double>();
+    private Map<Coordinate, Double> moveCost = new HashMap<>();
 
     public WavefrontAlgorithm(RegularGridMap map) {
         this.goal = map.getGoal();
@@ -42,7 +42,7 @@ public class WavefrontAlgorithm implements PlanAlgorithm {
 
         Queue<Coordinate> wavefront = new LinkedList<>();
         wavefront.add(goal);
-        Set visited = new HashSet();
+        Set<Coordinate> visited = new HashSet<>();
         Queue<Coordinate> parents = new LinkedList<>();
         Coordinate currentParent = goal;
         int i = 8;
@@ -114,7 +114,7 @@ public class WavefrontAlgorithm implements PlanAlgorithm {
                 try {
                     double a = distToGoal[x + xshift][y + yshift];
                     result.push(new Coordinate(x + xshift, y + yshift));
-                } catch (IndexOutOfBoundsException ex) {
+                } catch (IndexOutOfBoundsException ignored) {
                 }
             }
         }
@@ -144,7 +144,7 @@ public class WavefrontAlgorithm implements PlanAlgorithm {
         return path;
     }
 
-    public Coordinate computePathRecursive(List<Coordinate> path, Coordinate current) {
+    private Coordinate computePathRecursive(List<Coordinate> path, Coordinate current) {
         if (!current.equals(goal)) {
             Coordinate nextStep = findMinNeighbour(current);
             path.add(current);
@@ -166,7 +166,7 @@ public class WavefrontAlgorithm implements PlanAlgorithm {
                         minWeight = weight;
                         minCoordinate = new Coordinate(pivot.getX() + xshift, pivot.getY() + yshift);
                     }
-                } catch (IndexOutOfBoundsException ex) {
+                } catch (IndexOutOfBoundsException ignored) {
                 }
 
             }
@@ -176,6 +176,20 @@ public class WavefrontAlgorithm implements PlanAlgorithm {
 
     public double[][] getDistToGoal() {
         return this.distToGoal;
+    }
+
+    @Override
+    public void reset(RegularGridMap map) {
+        this.map=map;
+        this.goal=map.getGoal();
+        this.start=map.getStart();
+        this.distToGoal = new double[this.map.getGrid().length][this.map.getGrid()[0].length];
+        for (int i = 0; i < distToGoal.length; i++) {
+            for (int j = 0; j < distToGoal[0].length; j++) {
+                if (!goal.equals(i, j))
+                    this.distToGoal[i][j] = Double.MAX_VALUE;
+            }
+        }
     }
 
     /**

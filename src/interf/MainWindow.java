@@ -7,13 +7,13 @@ import plan.WavefrontAlgorithm;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.EventObject;
 import java.util.List;
 
 import static javax.swing.JComponent.WHEN_IN_FOCUSED_WINDOW;
@@ -27,7 +27,7 @@ public class MainWindow {
     private JLabel mainLabel;
     private JCheckBox showNumbersCheckBox;
     private JSpinner numColumsSpinner;
-    private JComboBox comboBox1;
+    private JComboBox<PlanAlgorithm> comboBox1;
 
     final JFileChooser fileChooser = new JFileChooser();
 
@@ -110,32 +110,34 @@ public class MainWindow {
         fileChooser.setCurrentDirectory(new File("./maps"));
         iconHistoric = new ArrayList<>();
 
-        ChangeListener changeListener = e -> {
-            if (image != null && map != null) {
-                iconHistoric.clear();
-                actionCounter = 0;
-                map = new RegularGridMap(image.getWidth() / (Integer) numColumsSpinner.getValue());
-                map.buildMap(ImageManager.parseImageToMap(image));
-                repaintMap();
-            }
-        };
 
-        showNumbersCheckBox.addChangeListener(changeListener);
+        showNumbersCheckBox.addItemListener(e -> stateChangedAction(e));
         mainPanel.setFocusable(true);
         frame.setFocusable(true);
         mainLabel.setFocusable(true);
-        numColumsSpinner.addChangeListener(changeListener);
+        numColumsSpinner.addChangeListener(e -> stateChangedAction(e));
         numColumsSpinner.setModel(new SpinnerListModel(new Integer[]{2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048}));
         numColumsSpinner.setValue(64);
 
         frame.pack();
         frame.setVisible(true);
-        comboBox1.addActionListener(e -> {
-            planner = (PlanAlgorithm) comboBox1.getSelectedItem();
-            actionCounter = 0;
+        comboBox1.addActionListener(e -> stateChangedAction(e));
+    }
+
+    private void stateChangedAction(EventObject e) {
+        if (image != null && map != null) {
             iconHistoric.clear();
+            actionCounter = 0;
+            if (!(e.getSource() instanceof JComboBox)) {
+                map = new RegularGridMap(image.getWidth() / (Integer) numColumsSpinner.getValue());
+                map.buildMap(ImageManager.parseImageToMap(image));
+                ((PlanAlgorithm) comboBox1.getModel().getSelectedItem()).reset(map);
+            } else {
+                planner = ((PlanAlgorithm) comboBox1.getSelectedItem());
+            }
             repaintMap();
-        });
+        }
+
     }
 
     private void repaintMap() {
