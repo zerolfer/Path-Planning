@@ -1,7 +1,7 @@
 import interf.MainWindow;
 
 public class Main {
-    public static void main(String[] args){
+    public static void main(String[] args) {
 /*
         // load image
         BufferedImage img = ImageManager.readImage("map3");
@@ -27,7 +27,7 @@ public class Main {
         ImageManager.showPath(map,planner,path);
 */
 
-        MainWindow mw=new MainWindow();
+        MainWindow mw = new MainWindow();
 
     }
 }

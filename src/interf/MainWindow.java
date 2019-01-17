@@ -29,7 +29,7 @@ public class MainWindow {
     private JSpinner numColumsSpinner;
     private JComboBox<PlanAlgorithm> comboBox1;
 
-    final JFileChooser fileChooser = new JFileChooser();
+    private final JFileChooser fileChooser = new JFileChooser();
 
     private int actionCounter = 0;
     private File f;
@@ -37,9 +37,9 @@ public class MainWindow {
 
     private final int numActions = 4;
     //    int numColumns = 128;
-    RegularGridMap map;
-    PlanAlgorithm planner;
-    List<BufferedImage> iconHistoric;
+    private RegularGridMap map;
+    private PlanAlgorithm planner;
+    private List<BufferedImage> iconHistoric;
 
 
     public MainWindow() {
@@ -96,7 +96,7 @@ public class MainWindow {
                 repaintMap();
                 map.buildMap(ImageManager.parseImageToMap(image));
 
-                comboBox1.setModel(new DefaultComboBoxModel(
+                comboBox1.setModel(new DefaultComboBoxModel<>(
                         new PlanAlgorithm[]{new WavefrontAlgorithm(map), new AStarAlgorithm(map)})
                 );
                 comboBox1.setSelectedIndex(0);
@@ -111,17 +111,17 @@ public class MainWindow {
         iconHistoric = new ArrayList<>();
 
 
-        showNumbersCheckBox.addItemListener(e -> stateChangedAction(e));
+        showNumbersCheckBox.addItemListener(this::stateChangedAction);
         mainPanel.setFocusable(true);
         frame.setFocusable(true);
         mainLabel.setFocusable(true);
-        numColumsSpinner.addChangeListener(e -> stateChangedAction(e));
+        numColumsSpinner.addChangeListener(this::stateChangedAction);
         numColumsSpinner.setModel(new SpinnerListModel(new Integer[]{2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048}));
         numColumsSpinner.setValue(64);
 
         frame.pack();
         frame.setVisible(true);
-        comboBox1.addActionListener(e -> stateChangedAction(e));
+        comboBox1.addActionListener(this::stateChangedAction);
     }
 
     private void stateChangedAction(EventObject e) {

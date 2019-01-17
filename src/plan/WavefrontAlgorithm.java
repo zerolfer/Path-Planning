@@ -44,7 +44,7 @@ public class WavefrontAlgorithm implements PlanAlgorithm {
         wavefront.add(goal);
         Set<Coordinate> visited = new HashSet<>();
         Queue<Coordinate> parents = new LinkedList<>();
-        Coordinate currentParent = goal;
+
         int i = 8;
         while (!wavefront.isEmpty()) {
             Coordinate node = wavefront.poll();
@@ -72,9 +72,6 @@ public class WavefrontAlgorithm implements PlanAlgorithm {
                         moveCost.get(new Coordinate(dx, dy)) + distToGoal[node.getX() + dx][node.getY() + dy];
             }
 
-//            distToGoal[node.getX()][node.getY()] = distToGoal[currentParent.getX()][currentParent.getY()] +
-//                    Math.sqrt(Math.pow(currentParent.getX() - node.getX(), 2) + Math.pow(currentParent.getY() - node.getY(), 2));
-
             Stack<Coordinate> children = getChildren(node);
             for (Coordinate child : children) {
                 if (!visited.contains(child) && !wavefront.contains(child)
@@ -84,24 +81,12 @@ public class WavefrontAlgorithm implements PlanAlgorithm {
             visited.add(node);
             parents.add(node);
             if (i >= 8) {
-                currentParent = parents.poll();
+                parents.poll(); //TODO: ¿?
                 i = 0;
             }
             ++i;
         }
-        System.out.println("Planner executed");
-//        while fringe not empty
-//        node:=first element of fringe
-//        if node is what we are searching for
-//        return success
-//        endif
-        //do whatever you need to do to node here
-//        children:=find children of node in graph
-//        add children not in visited to back of fringe
-//        add node to visited
-//        remove node from fringe
-//        end while
-
+        System.out.println("Wavefront Planner executed");
 
     }
 
@@ -180,9 +165,9 @@ public class WavefrontAlgorithm implements PlanAlgorithm {
 
     @Override
     public void reset(RegularGridMap map) {
-        this.map=map;
-        this.goal=map.getGoal();
-        this.start=map.getStart();
+        this.map = map;
+        this.goal = map.getGoal();
+        this.start = map.getStart();
         this.distToGoal = new double[this.map.getGrid().length][this.map.getGrid()[0].length];
         for (int i = 0; i < distToGoal.length; i++) {
             for (int j = 0; j < distToGoal[0].length; j++) {

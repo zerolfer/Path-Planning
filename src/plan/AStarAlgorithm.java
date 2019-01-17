@@ -98,7 +98,8 @@ public class AStarAlgorithm implements PlanAlgorithm {
         PriorityQueue<Node> OPEN = new PriorityQueue<>((o1, o2) -> {
             if (o1.getF() < o2.getF())
                 return -1;
-            else return +1;
+            else if (o1.getF() > o2.getF()) return +1;
+            else return 0;
         }); // queue of the visited but not expanded nodes
         List<Node> CLOSED = new ArrayList<>(); // set of the visited AND expanded nodes
 
@@ -119,13 +120,16 @@ public class AStarAlgorithm implements PlanAlgorithm {
                 child.g = current.g + getEuclideanDistance(child, current);
                 child.setF(child.g);
 
-                for (Node openNode : OPEN) {
+                boolean b=false;
+                for (Node openNode : OPEN)
                     if (openNode.equals(child) && child.g > openNode.g)
-                        continue;
-                }
+                        b = true;
+                if(b) continue;
                 OPEN.add(child);
             }
         }
+        System.out.println("A-Star executed");
+
     }
 
     private List<Node> getChildren(Node parent) {

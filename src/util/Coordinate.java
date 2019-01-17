@@ -27,7 +27,8 @@ public class Coordinate {
                 y == that.y;
     }
 
-    public boolean equals(int x, int y){
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
+    public boolean equals(int x, int y) {
         return this.getX() == x && this.getY() == y;
     }
 

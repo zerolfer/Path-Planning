@@ -33,7 +33,7 @@ public class ImageManager {
         return img;
     }
 
-    public static MapElements[][] parseImageToMap(BufferedImage image) {
+    static MapElements[][] parseImageToMap(BufferedImage image) {
         int error = 2;
         MapElements[][] result = new MapElements[image.getWidth()][image.getHeight()];
         for (int x = 0; x < image.getWidth(); x++) {
@@ -61,7 +61,7 @@ public class ImageManager {
         return result;
     }
 
-    public static void showImage(BufferedImage img) {
+    private static void showImage(BufferedImage img) {
         Graphics2D g = (Graphics2D) img.getGraphics();
         JFrame frame = new JFrame();
         ImageIcon icon = new ImageIcon(img);
@@ -73,7 +73,7 @@ public class ImageManager {
         frame.setVisible(true);
     }
 
-    public static BufferedImage parseMapToImage(RegularGridMap map) {
+    static BufferedImage parseMapToImage(RegularGridMap map) {
         MapElements[][] grid = map.getGrid();
         int cellSize = map.getCellSize();
         int width = grid.length * cellSize;
@@ -137,7 +137,7 @@ public class ImageManager {
         showImage(gridImage(image, cellSize));
     }
 
-    public static BufferedImage gridImage(BufferedImage image, int cellSize) {
+    static BufferedImage gridImage(BufferedImage image, int cellSize) {
         int width = image.getWidth();
         int height = image.getHeight();
         BufferedImage newImage = new BufferedImage(width, height, image.getType());
@@ -146,10 +146,10 @@ public class ImageManager {
         g.drawImage(image, 0, 0, null);
         g.setColor(Color.GRAY);
 
-        for (int i = 0; i < width; i+=cellSize)
+        for (int i = 0; i < width; i += cellSize)
             g.drawLine(i, 0, i, height);
 
-        for (int j = 0; j < height; j+=cellSize)
+        for (int j = 0; j < height; j += cellSize)
             g.drawLine(0, j, width, j);
         return newImage;
 
@@ -169,7 +169,7 @@ public class ImageManager {
 
     }
 
-    public static BufferedImage drawPlanNumbers(BufferedImage image, PlanAlgorithm planner, int cellSize) {
+    static BufferedImage drawPlanNumbers(BufferedImage image, PlanAlgorithm planner, int cellSize) {
 
 
         BufferedImage newImage = gridImage(image, cellSize);
@@ -199,7 +199,7 @@ public class ImageManager {
 
     }
 
-    public static BufferedImage drawPath(RegularGridMap map, PlanAlgorithm planner, List<Coordinate> path) {
+    static BufferedImage drawPath(RegularGridMap map, PlanAlgorithm planner, List<Coordinate> path) {
         MapElements[][] grid = map.getGrid();
         int cellSize = map.getCellSize();
         int width = grid.length * cellSize;
