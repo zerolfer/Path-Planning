@@ -38,7 +38,7 @@ public class ImageManager {
         MapElements[][] result = new MapElements[image.getWidth()][image.getHeight()];
         for (int x = 0; x < image.getWidth(); x++) {
             for (int y = 0; y < image.getHeight(); y++) {
-                result[x][y] = BLACK; // if it doesen't match, it will be treated as obstacle
+                result[x][y] = BLACK; // if it doesn't match, it will be treated as obstacle
                 final int clr = image.getRGB(x, y);
                 Color color = new Color(image.getRGB(x, y));
 
@@ -153,15 +153,6 @@ public class ImageManager {
             g.drawLine(0, j, width, j);
         return newImage;
 
-        /* TODO
-        alternativa:::
-        for (int i = 0; i < width; i+=cellSize)
-            g.drawLine(i, 0, i, height);
-
-        for (int j = 0; j < height; j+=cellSize)
-            g.drawLine(0, j, width, j);
-
-         */
     }
 
     public static void showPlanNumbers(BufferedImage image, WavefrontAlgorithm planner, int cellSize) {

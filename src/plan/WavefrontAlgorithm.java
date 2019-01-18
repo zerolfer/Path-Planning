@@ -39,17 +39,13 @@ public class WavefrontAlgorithm implements PlanAlgorithm {
 
     @Override
     public void executePlanner() {
-
+        long time=System.currentTimeMillis();
         Queue<Coordinate> wavefront = new LinkedList<>();
         wavefront.add(goal);
         Set<Coordinate> visited = new HashSet<>();
-        Queue<Coordinate> parents = new LinkedList<>();
 
-        int i = 8;
         while (!wavefront.isEmpty()) {
             Coordinate node = wavefront.poll();
-//            if (node.getX() == start.getX() && node.getY() == goal.getY())
-//                return;
             if (!node.equals(goal)) {
                 // seach the minimun value of the neighbours of the current node
                 int dx = 0, dy = 0;
@@ -79,14 +75,8 @@ public class WavefrontAlgorithm implements PlanAlgorithm {
                     wavefront.add(child);
             }
             visited.add(node);
-            parents.add(node);
-            if (i >= 8) {
-                parents.poll(); //TODO: ¿?
-                i = 0;
-            }
-            ++i;
         }
-        System.out.println("Wavefront Planner executed");
+        System.out.printf("Wavefront Planner executed in %d miliseconds\n",System.currentTimeMillis()-time );
 
     }
 

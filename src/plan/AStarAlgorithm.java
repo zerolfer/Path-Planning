@@ -95,6 +95,7 @@ public class AStarAlgorithm implements PlanAlgorithm {
 
     @Override
     public void executePlanner() {
+        long time=System.currentTimeMillis();
         PriorityQueue<Node> OPEN = new PriorityQueue<>((o1, o2) -> {
             if (o1.getF() < o2.getF())
                 return -1;
@@ -112,7 +113,7 @@ public class AStarAlgorithm implements PlanAlgorithm {
 
             if (current.equals(goal)) {
                 this.goal = current; // update info
-                System.out.println("A-Star executed");
+                System.out.printf("A-Star executed in %d miliseconds\n",System.currentTimeMillis()-time);
                 return;
             }
             for (Node child : getChildren(current)) {
